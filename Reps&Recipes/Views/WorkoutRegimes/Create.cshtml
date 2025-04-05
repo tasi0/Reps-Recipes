@@ -11,6 +11,10 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
+            <div class="form-group">
+                <label for="ImageUrl" class="control-label">Image URL</label>
+                <input type="text" class="form-control" asp-for="ImageURL" />
+            </div>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>

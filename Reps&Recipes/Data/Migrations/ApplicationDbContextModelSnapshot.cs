@@ -300,6 +300,9 @@ namespace Reps_Recipes.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImageURL")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("MealPlan")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -333,6 +336,10 @@ namespace Reps_Recipes.Data.Migrations
 
                     b.Property<int>("DurationMinutes")
                         .HasColumnType("int");
+
+                    b.Property<string>("ImageURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()

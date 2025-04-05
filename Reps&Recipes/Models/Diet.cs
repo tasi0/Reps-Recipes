@@ -19,6 +19,8 @@ namespace Reps_Recipes.Models
         [Required]
         public string MealPlan { get; set; } // JSON или String формат за храненията
 
+        public string? ImageURL { get; set; } 
+
         public ICollection<CatalogDiets> CatalogDiets { get; set; } = new List<CatalogDiets>();
     }
 }

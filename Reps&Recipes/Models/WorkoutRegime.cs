@@ -19,6 +19,9 @@ namespace Reps_Recipes.Models
         [Range(10, 300)]
         public int DurationMinutes { get; set; } // Продължителност в минути
 
+        [Required]
+        public string? ImageURL { get; set; }
+
         public ICollection<CatalogRegimes> CatalogRegimes { get; set; } = new List<CatalogRegimes>();
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,20 +12,32 @@ using Reps_Recipes.Models;
 
 namespace Reps_Recipes.Controllers
 {
+    [Authorize]
     public class CatalogsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CatalogsController(ApplicationDbContext context)
+        public CatalogsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+           _userManager = userManager;
         }
 
         // GET: Catalogs
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Catalogs.Include(c => c.User);
-            return View(await applicationDbContext.ToListAsync());
+            var userId = _userManager.GetUserId(User);
+
+            var catalogs = await _context.Catalogs
+              .Include(c => c.CatalogDiets)
+              .ThenInclude(cd => cd.Diet)
+              .Include(c => c.CatalogRegimes)
+              .ThenInclude(cr => cr.WorkoutRegime)
+              .Where(c => c.UserId == userId)
+              .ToListAsync();
+
+            return View(catalogs);
         }
 
         // GET: Catalogs/Details/5
@@ -57,15 +71,15 @@ namespace Reps_Recipes.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,UserId")] Catalog catalog)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Catalog catalog)
         {
             if (ModelState.IsValid)
             {
+                catalog.UserId = _userManager.GetUserId(User); // ВАЖНО
                 _context.Add(catalog);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", catalog.UserId);
             return View(catalog);
         }
 
@@ -153,6 +167,36 @@ namespace Reps_Recipes.Controllers
             }
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveDiet(int catalogId, int dietId)
+        {
+            var entry = await _context.CatalogDiets
+                .FirstOrDefaultAsync(cd => cd.CatalogId == catalogId && cd.DietId == dietId);
+
+            if (entry != null)
+            {
+                _context.CatalogDiets.Remove(entry);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveRegime(int catalogId, int regimeId)
+        {
+            var entry = await _context.CatalogRegimes
+                .FirstOrDefaultAsync(cr => cr.CatalogId == catalogId && cr.WorkoutRegimeId == regimeId);
+
+            if (entry != null)
+            {
+                _context.CatalogRegimes.Remove(entry);
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
