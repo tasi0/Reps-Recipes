@@ -11,7 +11,6 @@ using Reps_Recipes.Models;
 
 namespace Reps_Recipes.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class WorkoutRegimesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -30,17 +29,19 @@ namespace Reps_Recipes.Controllers
         // GET: WorkoutRegimes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var workoutRegime = await _context.WorkoutRegimes.Include(w => w.CatalogRegimes).FirstOrDefaultAsync(m => m.Id == id);
 
-            var workoutRegime = await _context.WorkoutRegimes
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (workoutRegime == null)
             {
                 return NotFound();
             }
+
+            // Check if it exists in any Catalog
+            var catalogEntry = workoutRegime.CatalogRegimes.FirstOrDefault();
+
+            ViewBag.IsInCatalog = catalogEntry != null;
+            ViewBag.CatalogId = catalogEntry?.CatalogId; // safely handles if null
+
 
             return View(workoutRegime);
         }

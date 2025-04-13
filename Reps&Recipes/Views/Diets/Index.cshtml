@@ -4,57 +4,73 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1 class="text-white text-center">Вашите диети</h1>
 
 @if (User.IsInRole("Admin"))
 {
     <p>
-        <a asp-action="Create">Create New</a>
+        <a asp-action="Create" class="text-white underline">Create New</a>
     </p>
 }
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Aim)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MealPlan)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Aim)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MealPlan)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    @if (!User.IsInRole("Admin"))
-                    {
-                        <a asp-controller="DietCatalog" asp-action="AddToCatalog" asp-route-id="@item.Id">Добави към каталог</a>
-                    }
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+
+<div class="diet-grid">
+    @foreach (var item in Model)
+    {
+        <div class="diet-card" style="background-image: url('/images/diet.webp');">
+            <div class="diet-overlay">
+                <h2>@item.Name</h2>
+                <a asp-action="Details" asp-route-id="@item.Id" class="details-link text-white">Преглед</a>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .diet-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 60px 80px;
+    }
+
+    .diet-card {
+        position: relative;
+        width: 100%;
+        padding-top: 100%; /* makes a square */
+        background-size: cover;
+        background-position: center;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+        .diet-card:hover {
+            transform: scale(1.05);
+        }
+
+    .diet-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-align: center;
+    }
+
+        .diet-overlay h2 {
+            margin: 0 0 10px;
+            font-size: 1.2rem;
+        }
+
+    .details-link {
+        color: #fff;
+        text-decoration: underline;
+    }
+</style>

@@ -1,42 +1,96 @@
 ﻿@model Reps_Recipes.Models.Diet
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Diet Details";
 }
 
-<h1>Details</h1>
+<style>
+    .diet-card {
+        max-width: 800px;
+        margin: 4rem auto;
+        padding: 2rem;
+        border-radius: 1rem;
+        background-color: rgba(30, 30, 30, 0.95);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+        color: #f5f5f5;
+        text-align: center;
+        overflow: hidden;
+        word-wrap: break-word;
+    }
 
-<div>
-    <h4>Diet</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Aim)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Aim)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MealPlan)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MealPlan)
-        </dd>
+        .diet-card h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .diet-card h4 {
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: #cccccc;
+            margin-bottom: 2rem;
+        }
+
+    .diet-details {
+        text-align: left;
+        padding: 0 1rem;
+        word-break: break-word;
+    }
+
+        .diet-details dt {
+            font-weight: 600;
+            color: #eeeeee;
+            white-space: nowrap;
+        }
+
+        .diet-details dd {
+            margin-bottom: 1rem;
+            color: #cccccc;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+        }
+
+    .action-links {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+        .action-links a {
+            color: #4da3ff;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease-in-out;
+        }
+
+            .action-links a:hover {
+                color: #7fcfff;
+                text-decoration: underline;
+            }
+</style>
+
+<div class="diet-card">
+    <h1>Кето диета</h1>
+    <h4>@Model.Name</h4>
+
+    <dl class="row diet-details">
+        <dt class="col-sm-3">Description:</dt>
+        <dd class="col-sm-9">@Model.Description</dd>
+
+        <dt class="col-sm-3">Aim:</dt>
+        <dd class="col-sm-9">@Model.Aim</dd>
+
+        <dt class="col-sm-3">Meal Plan:</dt>
+        <dd class="col-sm-9">@Model.MealPlan</dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+    @if (!User.IsInRole("Admin"))
+    {
+        <div class="action-links">
+            <a asp-controller="DietCatalog" asp-action="AddToCatalog" asp-route-id="@Model.Id">Добави към каталог</a>
+            <a asp-controller="DietCatalog" asp-action="RemoveFromCatalog" asp-route-id="@Model.Id">Премахни от каталог</a>
+        </div>
+    }
 </div>

@@ -30,17 +30,34 @@ namespace Reps_Recipes.Controllers
         // GET: Diets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            //var workoutRegime = await _context.WorkoutRegimes.Include(w => w.CatalogRegimes).FirstOrDefaultAsync(m => m.Id == id);
+
+            //if (workoutRegime == null)
+            //{
+            //    return NotFound();
+            //}
+
+            //// Check if it exists in any Catalog
+            //var catalogEntry = workoutRegime.CatalogRegimes.FirstOrDefault();
+
+            //ViewBag.IsInCatalog = catalogEntry != null;
+            //ViewBag.CatalogId = catalogEntry?.CatalogId; // safely handles if null
             if (id == null)
             {
                 return NotFound();
             }
 
             var diet = await _context.Diets
+                .Include(w => w.CatalogDiets)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (diet == null)
             {
                 return NotFound();
             }
+
+            var catalogEntry = diet.CatalogDiets.FirstOrDefault();
+            ViewBag.IsInCatalog = catalogEntry != null;
+            ViewBag.CatalogId = catalogEntry?.CatalogId;
 
             return View(diet);
         }

@@ -1,42 +1,106 @@
 ﻿@model Reps_Recipes.Models.WorkoutRegime
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Workout Regime Details";
 }
 
-<h1>Details</h1>
+<style>
+    .regime-card {
+        max-width: 800px;
+        margin: 4rem auto;
+        padding: 2rem;
+        border-radius: 1rem;
+        background-color: rgba(30, 30, 30, 0.95);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+        color: #f5f5f5;
+        text-align: center;
+        overflow: hidden;
+        word-wrap: break-word;
+    }
 
-<div>
-    <h4>WorkoutRegime</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Difficulty)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Difficulty)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DurationMinutes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DurationMinutes)
-        </dd>
+        .regime-card h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .regime-card h4 {
+            font-size: 1.4rem;
+            font-weight: 400;
+            color: #cccccc;
+            margin-bottom: 2rem;
+        }
+
+    .regime-details {
+        text-align: left;
+        padding: 0 1rem;
+        word-break: break-word;
+    }
+
+        .regime-details dt {
+            font-weight: 600;
+            color: #eeeeee;
+            white-space: nowrap;
+        }
+
+        .regime-details dd {
+            margin-bottom: 1rem;
+            color: #cccccc;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+        }
+
+    .action-links {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+        .action-links a,
+        .action-links button {
+            color: #4da3ff;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease-in-out;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+            .action-links a:hover,
+            .action-links button:hover {
+                color: #7fcfff;
+                text-decoration: underline;
+            }
+</style>
+
+<div class="regime-card">
+    <h1>Тренировъчен режим</h1>
+    <h4>@Model.Name</h4>
+
+    <dl class="row regime-details">
+        <dt class="col-sm-3">Описание:</dt>
+        <dd class="col-sm-9">@Model.Description</dd>
+
+        <dt class="col-sm-3">Трудност:</dt>
+        <dd class="col-sm-9">@Model.Difficulty</dd>
+
+        <dt class="col-sm-3">Продължителност:</dt>
+        <dd class="col-sm-9">@Model.DurationMinutes</dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+    @if (!User.IsInRole("Admin"))
+    {
+        <div class="action-links">
+            <a asp-controller="WorkoutCatalog" asp-action="AddToCatalog" asp-route-id="@Model.Id">Добави към каталог</a>
+            <form asp-controller="WorkoutCatalog" asp-action="RemoveWorkoutFromCatalog" method="post">
+                <input type="hidden" name="catalogId" value="@ViewBag.CatalogId" />
+                <input type="hidden" name="regimeId" value="@Model.Id" />
+                <button type="submit">Премахни от Каталог</button>
+            </form>
+        </div>
+    }
 </div>

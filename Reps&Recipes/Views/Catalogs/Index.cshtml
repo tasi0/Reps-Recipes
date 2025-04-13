@@ -1,32 +1,104 @@
 ﻿@model IEnumerable<Reps_Recipes.Models.Catalog>
 
-
 @{
     ViewData["Title"] = "Моите каталози";
 }
 
-<h1>Моите каталози</h1>
+<style>
+    .catalog-container {
+        max-width: 900px;
+        margin: 4rem auto;
+        padding: 2rem;
+        border-radius: 1rem;
+        background-color: rgba(30, 30, 30, 0.95);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+        color: #f5f5f5;
+    }
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Създай нов каталог</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Име на каталог</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Name</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm">Преглед</a>
-                </td>
-            </tr>
+        .catalog-container h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 2rem;
         }
-    </tbody>
-</table>
+
+        .catalog-container .btn-primary {
+            background-color: #4da3ff;
+            border: none;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+            .catalog-container .btn-primary:hover {
+                background-color: #7fcfff;
+            }
+
+    .catalog-table {
+        width: 100%;
+        margin-top: 2rem;
+        border-collapse: collapse;
+    }
+
+        .catalog-table thead {
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+
+        .catalog-table th,
+        .catalog-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .catalog-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .catalog-table .btn-sm {
+            font-size: 0.85rem;
+            padding: 0.3rem 0.6rem;
+            color: #4da3ff;
+            border: 1px solid #4da3ff;
+            background-color: transparent;
+            transition: all 0.2s ease-in-out;
+        }
+
+            .catalog-table .btn-sm:hover {
+                color: #7fcfff;
+                border-color: #7fcfff;
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+</style>
+
+<div class="catalog-container">
+    <h1>Моите каталози</h1>
+
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Създай нов каталог</a>
+    </p>
+
+    <table class="catalog-table">
+        <thead>
+            <tr>
+                <th>Име на каталог</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm">Преглед</a>
+                    </td>
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm">Премахни</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -54,7 +54,41 @@ namespace Reps_Recipes.Controllers
             _context.CatalogDiets.Add(entry);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Diets");
+            return RedirectToAction("Details", "Diets", new { id = dietId });
+        }
+
+        public async Task<IActionResult> RemoveFromCatalog(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var userId = _userManager.GetUserId(User);
+
+            var catalogs = await _context.Catalogs
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
+
+            ViewBag.DietId = id;
+            ViewBag.Catalogs = new SelectList(catalogs, "Id", "Name");
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveDiet(int catalogId, int dietId)
+        {
+            var entry = await _context.CatalogDiets
+                .FirstOrDefaultAsync(cd => cd.CatalogId == catalogId && cd.DietId == dietId);
+
+            if (entry != null)
+            {
+                _context.CatalogDiets.Remove(entry);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Details", "Diets", new {id = dietId});
         }
     }
 }

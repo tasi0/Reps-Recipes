@@ -49,7 +49,10 @@ namespace Reps_Recipes.Controllers
             }
 
             var catalog = await _context.Catalogs
-                .Include(c => c.User)
+                .Include(c => c.CatalogDiets)
+                    .ThenInclude(cd => cd.Diet)
+                 .Include(c => c.CatalogRegimes)
+                    .ThenInclude(cr => cr.WorkoutRegime)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (catalog == null)
             {
@@ -71,16 +74,14 @@ namespace Reps_Recipes.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Catalog catalog)
+        public async Task<IActionResult> Create([Bind("Name")] Catalog catalog)
         {
-            if (ModelState.IsValid)
-            {
-                catalog.UserId = _userManager.GetUserId(User); // ВАЖНО
-                _context.Add(catalog);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(catalog);
+
+            catalog.UserId = _userManager.GetUserId(User); // ВАЖНО
+            _context.Add(catalog);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Catalogs/Edit/5
@@ -170,35 +171,6 @@ namespace Reps_Recipes.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> RemoveDiet(int catalogId, int dietId)
-        {
-            var entry = await _context.CatalogDiets
-                .FirstOrDefaultAsync(cd => cd.CatalogId == catalogId && cd.DietId == dietId);
-
-            if (entry != null)
-            {
-                _context.CatalogDiets.Remove(entry);
-                await _context.SaveChangesAsync();
-            }
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> RemoveRegime(int catalogId, int regimeId)
-        {
-            var entry = await _context.CatalogRegimes
-                .FirstOrDefaultAsync(cr => cr.CatalogId == catalogId && cr.WorkoutRegimeId == regimeId);
-
-            if (entry != null)
-            {
-                _context.CatalogRegimes.Remove(entry);
-                await _context.SaveChangesAsync();
-            }
-
-            return RedirectToAction(nameof(Index));
-        }
 
         private bool CatalogExists(int id)
         {

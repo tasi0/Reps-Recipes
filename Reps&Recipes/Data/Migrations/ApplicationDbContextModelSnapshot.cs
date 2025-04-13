@@ -338,7 +338,6 @@ namespace Reps_Recipes.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ImageURL")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
